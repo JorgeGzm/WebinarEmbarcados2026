@@ -11,11 +11,11 @@
 
 LOG_MODULE_REGISTER(network_app, CONFIG_LOG_DEFAULT_LEVEL);
 
-#define WIFI_SSID                 "@GUZM"
-#define WIFI_PSK                  "tijolo2022"
+#define WIFI_SSID                 "YOUR_WIFI_SSID"
+#define WIFI_PSK                  "YOUR_WIFI_PASSWORD"
 #define SNTP_PORT                 123
 #define SNTP_SERVER_ADDR          "216.239.35.0"  /* time.google.com */
-#define LOCAL_TIMEZONE_HOURS      (-3)            /* BRT (UTC-3)    */
+#define LOCAL_TIMEZONE_HOURS      (1)             /* Budapest CET (UTC+1) */
 #define WIFI_SETTLE_DELAY_MS      2000
 #define RECONNECT_DELAY_SECONDS   10
 #define EVENT_POLL_TIMEOUT_S      3

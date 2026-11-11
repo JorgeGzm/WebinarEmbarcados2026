@@ -1,11 +1,11 @@
 {
     // -- Python / Zephyr environment -----------------------------------------
-    "python.defaultInterpreterPath": "${env:HOME}/zephyrproject/.venv/bin/python3",
+    "python.defaultInterpreterPath": "${env:HOME}/zephyr-venv/bin/python3",
     "python.terminal.activateEnvironment": true,
     "python.terminal.activateEnvInCurrentTerminal": true,
     "terminal.integrated.env.linux": {
-        "VIRTUAL_ENV": "${env:HOME}/zephyrproject/.venv",
-        "ZEPHYR_BASE": "${env:HOME}/zephyrproject/zephyr",
+        "VIRTUAL_ENV": "${env:HOME}/zephyr-venv",
+        "ZEPHYR_BASE": "${workspaceFolder}/zephyr",
         "ZEPHYR_SDK_INSTALL_DIR": "${env:HOME}/zephyr-sdk-1.0.1"
     },
 
@@ -22,14 +22,14 @@
         "__CDT_PARSER__"
     ],
     "C_Cpp.default.forcedInclude": [
-        "${workspaceFolder}/app/build/zephyr/include/generated/zephyr/autoconf.h"
+        "${workspaceFolder}/app/build-pico2-wh/zephyr/include/generated/zephyr/autoconf.h"
     ],
     "C_Cpp.default.includePath": [
         "${workspaceFolder}/**",
-        "${env:HOME}/zephyrproject/zephyr/include/**"
+        "${workspaceFolder}/zephyr/include/**"
     ],
     "C_Cpp.default.mergeConfigurations": true,
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/app/build/compile_commands.json",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/app/build-pico2-wh/compile_commands.json",
     "C_Cpp.default.cStandard": "c11",
     "C_Cpp.default.cppStandard": "c++20",
     "C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
@@ -40,5 +40,6 @@
     "files.associations": {
         "types.h": "c"
     },
-    "cdt.debug.sourceHighlighting": false
+    "cdt.debug.sourceHighlighting": false,
+    "cmake.sourceDirectory": "/wsl.localhost/Ubuntu-24.04/home/dai/WebinarEmbarcados2026/app"
 }

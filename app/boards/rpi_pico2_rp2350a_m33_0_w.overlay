@@ -1,0 +1,138 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Overlay para Industrial 8-Channel Relay Module for Raspberry Pi Pico W
+ *
+ * GPIO Map:
+ *   GP6  - Buzzer (passive, PWM slice 3 ch A)
+ *   GP13 - WS2812 RGB LED (PIO1)
+ *   GP14 - Relay CH8    GP18 - Relay CH4
+ *   GP15 - Relay CH7    GP19 - Relay CH3
+ *   GP16 - Relay CH6    GP20 - Relay CH2
+ *   GP17 - Relay CH5    GP21 - Relay CH1
+ */
+
+#include <dt-bindings/pinctrl/rpi-pico-rp2350a-pinctrl.h>
+#include <dt-bindings/pwm/pwm.h>
+#include <dt-bindings/led/led.h>
+
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart0;
+	};
+
+	/* 8-Channel Relay outputs (Active HIGH) */
+	relays {
+		compatible = "gpio-leds";
+		relay1: relay_1 { gpios = <&gpio0 21 GPIO_ACTIVE_HIGH>; label = "Relay CH1"; };
+		relay2: relay_2 { gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>; label = "Relay CH2"; };
+		relay3: relay_3 { gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>; label = "Relay CH3"; };
+		relay4: relay_4 { gpios = <&gpio0 18 GPIO_ACTIVE_HIGH>; label = "Relay CH4"; };
+		relay5: relay_5 { gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>; label = "Relay CH5"; };
+		relay6: relay_6 { gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>; label = "Relay CH6"; };
+		relay7: relay_7 { gpios = <&gpio0 15 GPIO_ACTIVE_HIGH>; label = "Relay CH7"; };
+		relay8: relay_8 { gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>; label = "Relay CH8"; };
+	};
+
+	/* Passive buzzer via PWM (GP6 = PWM slice 3, channel A = index 6) */
+	pwmleds {
+		compatible = "pwm-leds";
+		buzzer0: buzzer0 {
+			pwms = <&pwm 6 PWM_HZ(1000) PWM_POLARITY_NORMAL>;
+			label = "Buzzer";
+		};
+	};
+
+	aliases {
+		relay1 = &relay1;
+		relay2 = &relay2;
+		relay3 = &relay3;
+		relay4 = &relay4;
+		relay5 = &relay5;
+		relay6 = &relay6;
+		relay7 = &relay7;
+		relay8 = &relay8;
+		pwm-buzzer0 = &buzzer0;
+		led-strip = &ws2812;
+	};
+
+	fstab {
+		compatible = "zephyr,fstab";
+		lfs1: lfs1 {
+			compatible = "zephyr,fstab,littlefs";
+			read-size = <16>;
+			prog-size = <256>;
+			cache-size = <256>;
+			lookahead-size = <128>;
+			block-cycles = <512>;
+			partition = <&storage_partition>;
+			mount-point = "/lfs1";
+		};
+	};
+};
+
+/* Pinctrl for PWM buzzer (GP6) and WS2812 PIO (GP13) */
+&pinctrl {
+	pwm_ch3a_default: pwm_ch3a_default {
+		group1 {
+			pinmux = <PWM_3A_P6>;
+		};
+	};
+
+	pio1_ws2812_default: pio1_ws2812_default {
+		ws2812 {
+			pinmux = <PIO1_P13>;
+		};
+	};
+};
+
+/* PWM for buzzer on GP6 */
+&pwm {
+	status = "okay";
+	pinctrl-0 = <&pwm_ch3a_default>;
+	pinctrl-names = "default";
+};
+
+/* WS2812 RGB LED on GP13 via PIO1 (PIO0 is used by WiFi CYW43) */
+&pio1 {
+	status = "okay";
+
+	pio1_ws2812: pio1_ws2812 {
+		compatible = "worldsemi,ws2812-rpi_pico-pio";
+		status = "okay";
+		pinctrl-0 = <&pio1_ws2812_default>;
+		pinctrl-names = "default";
+		bit-waveform = <3>, <3>, <4>;
+
+		ws2812: ws2812 {
+			gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+			chain-length = <1>;
+			color-mapping = <LED_COLOR_ID_GREEN
+					 LED_COLOR_ID_RED
+					 LED_COLOR_ID_BLUE>;
+			reset-delay = <280>;
+			frequency = <800000>;
+		};
+	};
+};
+
+/* Software RTC: SNTP must restore time after reset. */
+/ { rtc: rtc { compatible = "zephyr,rtc-emul"; status = "okay"; }; };
+/* 4 MiB flash: mapped code at zero, LittleFS in final 64 KiB. */
+&code_partition { reg = <0x0 0x3f0000>; };
+&flash0 {
+    partitions {
+        compatible = "fixed-partitions";
+        storage_partition: partition@3f0000 {
+            label = "storage";
+            reg = <0x3f0000 0x10000>;
+        };
+    };
+};
+/* USB CDC ACM UART para console e shell */
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};

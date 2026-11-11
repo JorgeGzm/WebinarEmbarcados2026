@@ -7,6 +7,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/hwinfo.h>
 #include <zephyr/drivers/watchdog.h>
+#include <zephyr/shell/shell.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/fs/fs.h>
 #include <zephyr/fs/littlefs.h>
@@ -48,6 +49,7 @@ static const struct pwm_dt_spec buzzer_pwm =
 
 static const struct device *const g_wdt = DEVICE_DT_GET(DT_ALIAS(watchdog0));
 static int g_wdt_channel = -1;
+static bool g_wdt_feed_enabled = true;
 
 /* Human-readable names for the RESET_* flags defined in <drivers/hwinfo.h>.
  * Each SoC reports only the subset of flags supported by its hardware.
@@ -148,8 +150,30 @@ int setup_wdt_feed(void)
 	if (g_wdt_channel < 0) {
 		return -ENODEV;
 	}
+	if (!g_wdt_feed_enabled) {
+		return 0;
+	}
 	return wdt_feed(g_wdt, g_wdt_channel);
 }
+
+static int cmd_watchdog_test(const struct shell *sh, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	if (g_wdt_channel < 0) {
+		shell_error(sh, "Watchdog is not armed");
+		return -ENODEV;
+	}
+
+	shell_warn(sh, "Stopping watchdog feed; reset expected in about 5 seconds");
+	g_wdt_feed_enabled = false;
+	return 0;
+}
+
+SHELL_CMD_REGISTER(watchdog_test, NULL,
+		   "Stop feeding the watchdog and verify automatic reset.",
+		   cmd_watchdog_test);
 
 static void setup_init_sanity(void)
 {

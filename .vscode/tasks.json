@@ -11,17 +11,28 @@
         {
             "label": "app: build",
             "type": "shell",
-            "group": { "kind": "build", "isDefault": true },
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            },
             "command": "${VIRTUAL_ENV}/bin/west",
             "args": [
-                "build", "-b", "dev_rpi_pico/rp2040/w", "-p", "-s", "app",
-                "-d", "app/build",
+                "build",
+                "-b",
+                "dev_rpi_pico/rp2040/w",
+                "-p",
+                "-s",
+                "app",
+                "-d",
+                "app/build",
                 "--",
                 "-DBOARD_ROOT=${workspaceFolder}",
                 "-DZEPHYR_EXTRA_MODULES=${workspaceFolder}/lib",
                 "-DDTC_OVERLAY_FILE=${workspaceFolder}/app/boards/dev_rpi_pico_rp2040_w.overlay"
             ],
-            "problemMatcher": ["$gcc"]
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
             "label": "app: build (debug.conf)",
@@ -29,43 +40,139 @@
             "group": "build",
             "command": "${VIRTUAL_ENV}/bin/west",
             "args": [
-                "build", "-b", "dev_rpi_pico/rp2040/w", "-p", "-s", "app",
-                "-d", "app/build",
+                "build",
+                "-b",
+                "dev_rpi_pico/rp2040/w",
+                "-p",
+                "-s",
+                "app",
+                "-d",
+                "app/build",
                 "--",
                 "-DBOARD_ROOT=${workspaceFolder}",
                 "-DZEPHYR_EXTRA_MODULES=${workspaceFolder}/lib",
                 "-DEXTRA_CONF_FILE=debug.conf",
                 "-DDTC_OVERLAY_FILE=${workspaceFolder}/app/boards/dev_rpi_pico_rp2040_w.overlay"
             ],
-            "problemMatcher": ["$gcc"]
+            "problemMatcher": [
+                "$gcc"
+            ]
         },
         {
             "label": "app: flash",
             "type": "shell",
             "command": "${VIRTUAL_ENV}/bin/west",
-            "args": ["flash", "-d", "app/build"],
+            "args": [
+                "flash",
+                "-d",
+                "app/build"
+            ],
             "problemMatcher": []
         },
         {
             "label": "app: rom_report",
             "type": "shell",
             "command": "${VIRTUAL_ENV}/bin/west",
-            "args": ["build", "-d", "app/build", "-t", "rom_report"],
+            "args": [
+                "build",
+                "-d",
+                "app/build",
+                "-t",
+                "rom_report"
+            ],
             "problemMatcher": []
         },
         {
             "label": "app: ram_report",
             "type": "shell",
             "command": "${VIRTUAL_ENV}/bin/west",
-            "args": ["build", "-d", "app/build", "-t", "ram_report"],
+            "args": [
+                "build",
+                "-d",
+                "app/build",
+                "-t",
+                "ram_report"
+            ],
             "problemMatcher": []
         },
         {
             "label": "app: clear",
             "type": "shell",
             "command": "rm",
-            "args": ["-rf", "${workspaceFolder}/app/build"],
+            "args": [
+                "-rf",
+                "${workspaceFolder}/app/build"
+            ],
             "problemMatcher": []
+        },
+        {
+            "label": "app: build Pico 2 WH",
+            "type": "shell",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "command": "/home/dai/zephyr-venv/bin/west",
+            "args": [
+                "build",
+                "-b",
+                "rpi_pico2/rp2350a/m33_0/w",
+                "-p",
+                "-s",
+                "app",
+                "-d",
+                "app/build-pico2-wh",
+                "--",
+                "-DBOARD_ROOT=${workspaceFolder}",
+                "-DZEPHYR_EXTRA_MODULES=${workspaceFolder}/lib",
+                "-DDTC_OVERLAY_FILE=${workspaceFolder}/app/boards/rpi_pico2_rp2350a_m33_0_w.overlay",
+                "-DEXTRA_CONF_FILE=pico2_wh.conf"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "VIRTUAL_ENV": "/home/dai/zephyr-venv",
+                    "ZEPHYR_BASE": "/home/dai/WebinarEmbarcados2026/zephyr",
+                    "ZEPHYR_SDK_INSTALL_DIR": "/home/dai/zephyr-sdk-1.0.1",
+                    "PATH": "/home/dai/zephyr-venv/bin:${env:PATH}"
+                }
+            }
+        },
+        {
+            "label": "app: build Pico 2 WH (debug.conf)",
+            "type": "shell",
+            "group": "build",
+            "command": "/home/dai/zephyr-venv/bin/west",
+            "args": [
+                "build",
+                "-b",
+                "rpi_pico2/rp2350a/m33_0/w",
+                "-p",
+                "-s",
+                "app",
+                "-d",
+                "app/build-pico2-wh-debug",
+                "--",
+                "-DBOARD_ROOT=${workspaceFolder}",
+                "-DZEPHYR_EXTRA_MODULES=${workspaceFolder}/lib",
+                "-DDTC_OVERLAY_FILE=${workspaceFolder}/app/boards/rpi_pico2_rp2350a_m33_0_w.overlay",
+                "-DEXTRA_CONF_FILE=pico2_wh.conf;debug.conf"
+            ],
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "VIRTUAL_ENV": "/home/dai/zephyr-venv",
+                    "ZEPHYR_BASE": "/home/dai/WebinarEmbarcados2026/zephyr",
+                    "ZEPHYR_SDK_INSTALL_DIR": "/home/dai/zephyr-sdk-1.0.1",
+                    "PATH": "/home/dai/zephyr-venv/bin:${env:PATH}"
+                }
+            }
         }
     ]
 }
